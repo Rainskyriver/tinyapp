@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const app = express();
 const PORT = 8080;
-const generateRandomString = require('./functions/generateRandomString');
+const { generateRandomString } = require('./functions/generateRandomString.js');
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouse.ca",
@@ -35,19 +35,27 @@ app.get("/urls/:shortURL", (req, res) => {
   res.render("urls_show", templateVars);
 });
 
-
-app.get("/urls.json", (req, res) => {
-  res.json(urlDatabase);
+app.get("/u/:shortURL", (req, res) => {
+  const longURL = urlDatabase[req.params.shortURL];
+  res.redirect(longURL);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>");
-});
+
+// app.get("/urls.json", (req, res) => {
+//   res.json(urlDatabase);
+// });
+
+// app.get("/hello", (req, res) => {
+//   res.send("<html><body>Hello <b>World</b></body></html>");
+// });
 //============POST==============================================
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);
-  res.send("Alright, bud");
+  const short = generateRandomString();
+  const long = req.body.longURL;
+  urlDatabase[short] = long;
+  let templateVars = { shortURL: short, longURL: long };
+  res.render("urls_show", templateVars);
 });
 
 //============LISTEN============================================
