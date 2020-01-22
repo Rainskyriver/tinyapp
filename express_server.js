@@ -67,7 +67,7 @@ app.get("/urls/:shortURL", (req, res) => {
 
 //view urls_register
 app.get("/register", (req, res) => {
-  res.render("url_register")
+  res.render("urls_register")
 });
 
 //newURL
@@ -110,15 +110,20 @@ app.post("/urls", (req, res) => {
 
 //Register new user
 app.post("/register", (req, res) => {
-  userID = generateRandomString();
-  res.cookie("user_id", userID);
-  console.log(req.cookies.user_id, userID)
+  if (req.body.email === '' || req.body.password === '') {
+    res.sendStatus(400);
+    // res.send('Error code 400');
+  }
 
-  users[userID] = { 
-    userID,
-    email: req.body.email,
-    password: req.body.password
-  };
+  userID = generateRandomString();
+  
+    users[userID] = { 
+      userID,
+      email: req.body.email,
+      password: req.body.password
+    };
+
+  res.cookie("user_id", userID);
 
   res.redirect("/urls");
 });
