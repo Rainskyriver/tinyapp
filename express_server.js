@@ -42,7 +42,7 @@ app.get("/", (req, res) => {
 //for urls_index in ./views
 app.get("/urls", (req, res) => {
   let templateVars = {
-    urls: urlsForUser(req.cookies.user_id),
+    urls: urlsForUser(urlDatabase, req.cookies.user_id),
     user: users[req.cookies.user_id]
   };
   res.render("urls_index", templateVars);
