@@ -5,6 +5,7 @@ const app = express();
 const PORT = 8080;
 const { generateRandomString } = require('./functions/generateRandomString.js');
 const { checkEmail } = require('./functions/checkEmail.js');
+const { urlsForUser } = require('./functions/urlsForUser.js');
 
 //Default URLs
 const urlDatabase = {
@@ -41,7 +42,7 @@ app.get("/", (req, res) => {
 //for urls_index in ./views
 app.get("/urls", (req, res) => {
   let templateVars = {
-    urls: urlDatabase,
+    urls: urlsForUser(req.cookies.user_id),
     user: users[req.cookies.user_id]
   };
   res.render("urls_index", templateVars);
