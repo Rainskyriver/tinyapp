@@ -6,6 +6,7 @@ const PORT = 8080;
 const { generateRandomString } = require('./functions/generateRandomString.js');
 const { checkEmail } = require('./functions/checkEmail.js');
 const { urlsForUser } = require('./functions/urlsForUser.js');
+const { isLoggedIn } = require('./functions/isLoggedIn.js');
 
 //Default URLs
 const urlDatabase = {
@@ -51,7 +52,7 @@ app.get("/urls", (req, res) => {
 //for urls_new in ./views
 app.get("/urls/new", (req, res) => {
   let templateVars = {
-    urls: urlDatabase,
+    urls: urlsForUser(urlDatabase, req.cookies.user_id),
     user: users[req.cookies.user_id]
   };
   if (users[req.cookies.user_id]) {
@@ -64,7 +65,7 @@ app.get("/urls/new", (req, res) => {
 app.get("/urls/:shortURL", (req, res) => {
   let templateVars = { 
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL],
+    longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.cookies.user_id]
   };
   res.render("urls_show", templateVars);
@@ -82,7 +83,7 @@ app.get("/login", (req, res) => {
 
 //newURL
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
@@ -105,8 +106,7 @@ app.get("*", (req, res) => {
 //Edit URL button
 app.post("/urls/:id", (req, res) => {
   const longURL = req.body.longURL;
-  urlDatabase[req.params.id] = longURL;
-  console.log('edit button');
+  urlDatabase[req.params.id].longURL = longURL;
   res.redirect('/urls');
 });
 
@@ -114,15 +114,17 @@ app.post("/urls/:id", (req, res) => {
 app.post("/urls", (req, res) => {
   const short = generateRandomString();
   const long = req.body.longURL;
-  urlDatabase[short] = long;
-  console.log('edit button');
+  urlDatabase[short] = {
+    longURL: long,
+    userID: req.cookies.user_id
+  };
   res.redirect(`/urls/${short}`);
 });
 
 //Register new user
 app.post("/register", (req, res) => {
   if (req.body.email === '' || req.body.password === '' || checkEmail(users, req.body.email)) {
-    res.sendStatus(400);
+    res.sendStatus(403);
   }
 
     id = generateRandomString();
