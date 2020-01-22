@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const PORT = 8080;
 const { generateRandomString } = require('./functions/generateRandomString.js');
+const { checkEmail } = require('./functions/checkEmail.js');
 
 //Default URLs
 const urlDatabase = {
@@ -110,13 +111,12 @@ app.post("/urls", (req, res) => {
 
 //Register new user
 app.post("/register", (req, res) => {
-  if (req.body.email === '' || req.body.password === '') {
+  if (req.body.email === '' || req.body.password === '' || checkEmail(req.body.email)) {
+    console.log(req.body.email, checkEmail(req.body.email));
     res.sendStatus(400);
-    // res.send('Error code 400');
   }
 
   userID = generateRandomString();
-  
     users[userID] = { 
       userID,
       email: req.body.email,
