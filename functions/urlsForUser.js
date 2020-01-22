@@ -1,8 +1,8 @@
-const urlsForUser = function(id) {
+const urlsForUser = function(obj, id) {
   let results = {};
-  for (const shortURL in urlDatabase) {
-    if (urlDatabase[shortURL].userID === id) {
-      results[shortURL] = urlDatabase[shortURL].longURL;
+  for (const shortURL in obj) {
+    if (obj[shortURL].userID === id) {
+      results[shortURL] = obj[shortURL].longURL;
     }
   }
   return results;
