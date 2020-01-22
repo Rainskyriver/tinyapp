@@ -8,8 +8,8 @@ const { checkEmail } = require('./functions/checkEmail.js');
 
 //Default URLs
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "b2xVn2": { longURL: "http://www.lighthouselabs.ca", userID: "randomID" },
+  "9sm5xK": { longURL: "http://www.google.com", userID: "randomID" }
 };
 
 //Default Users
@@ -17,7 +17,7 @@ const users = {
   "randomID": {
     id: "randomID",
     email: "example@example.com",
-    password: "example123"
+    password: "123"
   },
   "randomID2": {
     id: "randomID2",
@@ -53,7 +53,10 @@ app.get("/urls/new", (req, res) => {
     urls: urlDatabase,
     user: users[req.cookies.user_id]
   };
-  res.render("urls_new", templateVars);
+  if (users[req.cookies.user_id]) {
+    res.render("urls_new", templateVars);
+  }
+  res.redirect("/login");
 });
 
 //for urls_show in ./views
@@ -121,14 +124,14 @@ app.post("/register", (req, res) => {
     res.sendStatus(400);
   }
 
-  userID = generateRandomString();
-    users[userID] = { 
-      userID,
+    id = generateRandomString();
+    users[id] = { 
+      id,
       email: req.body.email,
       password: req.body.password
     };
 
-  res.cookie("user_id", userID);
+  res.cookie("user_id", id);
 
   res.redirect("/urls");
 });
@@ -138,8 +141,8 @@ app.post("/login", (req, res) => {
   if (checkEmail(users, req.body.email)) {
     for (let user in users) {
       if (req.body.password === users[user].password) {
-        console.log('successful login, id: ', users[user])
-        res.cookie("user_id", users[user].userID);
+        console.log(users[user].id);
+        res.cookie("user_id", users[user].id);
         res.redirect("/urls");
       }
     }
