@@ -10,14 +10,16 @@
         <a class="nav-item nav-link text-dark" href="/urls/new">Create New URL</a>
       </div>
     </div>
-    <% if (!((typeof username == "string") && username)) { %>
-      <form class ="form-inline" method="POST" action="/login">
-          <input class="form-control" type="text" name="username">
+    <% if (typeof user === 'undefined') { %>
+      <form class ="form-inline" method="GET" action="/login">
           <button type="submit" class="btn btn-outline-dark" >Login</button>
       </form>
+      <form class ="form-inline" method="GET" action="/register">
+        <button type="submit" class="btn btn-outline-dark" >Register</button>
+    </form>
       <% } else { %>
         <form class ="form-inline" method="POST" action="/logout">
-            <a class="font-weight-bold"><%= username %></a>
+            <a class="font-weight-bold"> Logged in as: <%= user.email %></a>
             <button type="submit" class="btn btn-outline-dark" >Logout</button>
         </form>
     <% } %>
