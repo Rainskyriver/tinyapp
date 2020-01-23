@@ -32,10 +32,10 @@ app.set("view engine", "ejs");
 
 // app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
-    app.use(cookieSession({
-      name: 'session',
-      keys: ["key1"]
-    }));
+app.use(cookieSession({
+  name: 'session',
+  keys: ["key1"]
+}));
 
 //========GET================================================================
 //Standard
@@ -66,7 +66,7 @@ app.get("/urls/new", (req, res) => {
 
 //for urls_show in ./views
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { 
+  let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
     user: users[req.session.user_id]
@@ -133,9 +133,9 @@ app.post("/register", (req, res) => {
   if (req.body.email === '' || req.body.password === '' || checkEmail(users, req.body.email)) {
     res.sendStatus(403);
   }
-  hashword = bcrypt.hashSync(req.body.password, 10);
-  id = generateRandomString();
-  users[id] = { 
+  const hashword = bcrypt.hashSync(req.body.password, 10);
+  const id = generateRandomString();
+  users[id] = {
     id,
     email: req.body.email,
     password: hashword
@@ -156,7 +156,7 @@ app.post("/login", (req, res) => {
       }
     }
   }
-    res.redirect("/login");
+  res.redirect("/login");
 });
 
 //logout

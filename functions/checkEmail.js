@@ -1,10 +1,10 @@
 const checkEmail = function(obj, email) {
   for (const user in obj) {
     if (obj[user].email === email) {
-      return true;
+      return obj[user];
     }
   }
-  return false;
+  return undefined;
 };
 
 module.exports = { checkEmail };
