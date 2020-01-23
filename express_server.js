@@ -4,7 +4,7 @@ const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const app = express();
 const PORT = 8080;
-const { generateRandomString, checkEmail, urlsForUser, isLoggedIn } = require('./helpers.js');
+const { generateRandomString, checkEmail, urlsForUser, isLoggedIn, isValidShortURL } = require('./helpers.js');
 
 //Default URLs
 const urlDatabase = {
@@ -72,6 +72,10 @@ app.get("/urls/new", (req, res) => {
 
 //for urls_show in ./views
 app.get("/urls/:shortURL", (req, res) => {
+  if (!isValidShortURL(urlDatabase, req.params.shortURL)) {
+    res.sendStatus(404);
+    return;
+  }
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
@@ -96,6 +100,10 @@ app.get("/login", (req, res) => {
 
 //newURL
 app.get("/u/:shortURL", (req, res) => {
+  if (!isValidShortURL(urlDatabase, req.params.shortURL)) {
+    res.sendStatus(404);
+    return;
+  }
   const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
@@ -151,7 +159,6 @@ app.post("/register", (req, res) => {
 //login Button
 app.post("/login", (req, res) => {
   if (checkEmail(userDatabase, req.body.email)) {
-    
     for (let user in userDatabase) {
       if ((bcrypt.compareSync(req.body.password, userDatabase[user].password)) && (req.body.email === userDatabase[user].email)) {
         req.session.user_id = userDatabase[user].id;
