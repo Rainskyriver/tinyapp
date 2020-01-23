@@ -18,7 +18,7 @@
     <div class="card-footer text-muted"></div>
     <% if (user) {%>
     <h4 class="card-title">Edit URL</h4>
-    <form class="form-inline" style="justify-content: center;" method="POST" action="/urls/<%= shortURL %>">
+    <form class="form-inline" style="justify-content: center;" method="POST" action="/urls/<%= shortURL %>?_method=PUT">
       <label for="longURL" class="card-text">New URL</label>
       <input class="form-control" type="text" name="longURL" placeholder="http://" >
       <button type="submit" class="btn btn-outline-success" >Submit</button>

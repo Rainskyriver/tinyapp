@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require("body-parser");
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
+const methodOverride = require('method-override');
 const app = express();
 const PORT = 8080;
 const { generateRandomString, checkEmail, urlsForUser, isLoggedIn, isValidShortURL } = require('./helpers.js');
@@ -30,6 +31,7 @@ const userDatabase = {
 
 app.set("view engine", "ejs");
 
+app.use(methodOverride('_method'))
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
@@ -116,7 +118,7 @@ app.get("*", (req, res) => {
 //============POST==============================================
 
 //Edit URL Submit Button
-app.post("/urls/:id", (req, res) => {
+app.put("/urls/:id", (req, res) => {
   if (isLoggedIn(urlDatabase, req.session)) {
     const longURL = req.body.longURL;
     urlDatabase[req.params.id].longURL = longURL;
@@ -181,7 +183,7 @@ app.post("/logout", (req, res) => {
 //==========DELETE==============================================
 
 //delete URL
-app.post("/urls/:shortURL/delete", (req, res) => {
+app.delete("/urls/:shortURL/delete", (req, res) => {
   if (isLoggedIn(urlDatabase, req.session)) {
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls");
