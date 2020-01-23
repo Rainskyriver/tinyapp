@@ -25,7 +25,7 @@ describe('checkEmail', function() {
   it('should return null or undefined when given an invalid email', ()=>{
     const user = checkEmail(users, "u@u.ca")
     const expectedOutput = undefined;
-    
+
     assert.isUndefined(user, expectedOutput);
   });
 });

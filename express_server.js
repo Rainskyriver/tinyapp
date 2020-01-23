@@ -14,7 +14,7 @@ const urlDatabase = {
 };
 
 //Default Users
-const users = {
+const userDatabase = {
   "randomID": {
     id: "randomID",
     email: "example@example.com",
@@ -27,10 +27,10 @@ const users = {
   }
 };
 
+//=======MIDDLEWARE==========================================================
 
 app.set("view engine", "ejs");
 
-// app.use(cookieParser());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
@@ -38,6 +38,7 @@ app.use(cookieSession({
 }));
 
 //========GET================================================================
+
 //Standard
 app.get("/", (req, res) => {
   res.send('Hello');
@@ -47,7 +48,7 @@ app.get("/", (req, res) => {
 app.get("/urls", (req, res) => {
   let templateVars = {
     urls: urlsForUser(urlDatabase, req.session.user_id),
-    user: users[req.session.user_id]
+    user: userDatabase[req.session.user_id]
   };
   res.render("urls_index", templateVars);
 });
@@ -56,9 +57,9 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   let templateVars = {
     urls: urlsForUser(urlDatabase, req.session.user_id),
-    user: users[req.session.user_id]
+    user: userDatabase[req.session.user_id]
   };
-  if (users[req.session.user_id]) {
+  if (userDatabase[req.session.user_id]) {
     res.render("urls_new", templateVars);
   }
   res.redirect("/login");
@@ -69,7 +70,7 @@ app.get("/urls/:shortURL", (req, res) => {
   let templateVars = {
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
-    user: users[req.session.user_id]
+    user: userDatabase[req.session.user_id]
   };
   res.render("urls_show", templateVars);
 });
@@ -95,18 +96,9 @@ app.get("*", (req, res) => {
   res.redirect("/urls");
 });
 
-
-// app.get("/urls.json", (req, res) => {
-//   res.json(urlDatabase);
-// });
-
-// app.get("/hello", (req, res) => {
-//   res.send("<html><body>Hello <b>World</b></body></html>");
-// });
 //============POST==============================================
 
-
-//Edit URL button
+//Edit URL Submit Button
 app.post("/urls/:id", (req, res) => {
   if (isLoggedIn(urlDatabase, req.session)) {
     const longURL = req.body.longURL;
@@ -117,7 +109,7 @@ app.post("/urls/:id", (req, res) => {
   }
 });
 
-//Post new URL
+//Post new URL Button
 app.post("/urls", (req, res) => {
   const short = generateRandomString();
   const long = req.body.longURL;
@@ -128,14 +120,14 @@ app.post("/urls", (req, res) => {
   res.redirect(`/urls/${short}`);
 });
 
-//Register new user
+//Register new user Button
 app.post("/register", (req, res) => {
-  if (req.body.email === '' || req.body.password === '' || checkEmail(users, req.body.email)) {
+  if (req.body.email === '' || req.body.password === '' || checkEmail(userDatabase, req.body.email)) {
     res.sendStatus(403);
   }
   const hashword = bcrypt.hashSync(req.body.password, 10);
   const id = generateRandomString();
-  users[id] = {
+  userDatabase[id] = {
     id,
     email: req.body.email,
     password: hashword
@@ -145,13 +137,13 @@ app.post("/register", (req, res) => {
   res.redirect("/urls");
 });
 
-//login
+//login Button
 app.post("/login", (req, res) => {
-  if (checkEmail(users, req.body.email)) {
+  if (checkEmail(userDatabase, req.body.email)) {
     
-    for (let user in users) {
-      if ((bcrypt.compareSync(req.body.password, users[user].password)) && (req.body.email === users[user].email)) {
-        req.session.user_id = users[user].id;
+    for (let user in userDatabase) {
+      if ((bcrypt.compareSync(req.body.password, userDatabase[user].password)) && (req.body.email === userDatabase[user].email)) {
+        req.session.user_id = userDatabase[user].id;
         res.redirect("/urls");
       }
     }
@@ -159,7 +151,7 @@ app.post("/login", (req, res) => {
   res.redirect("/login");
 });
 
-//logout
+//logout Button
 app.post("/logout", (req, res) => {
   req.session = null;
 
@@ -167,6 +159,7 @@ app.post("/logout", (req, res) => {
 });
 
 //==========DELETE==============================================
+
 //delete URL
 app.post("/urls/:shortURL/delete", (req, res) => {
   if (isLoggedIn(urlDatabase, req.session.user_id)) {
@@ -178,6 +171,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 //============LISTEN============================================
+
 app.listen(PORT, () => {
   console.log(`Example listening on port: ${PORT}`);
 });
