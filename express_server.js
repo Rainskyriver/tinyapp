@@ -41,11 +41,12 @@ app.use(cookieSession({
 
 //Standard
 app.get("/", (req, res) => {
-  if (isLoggedIn(urlDatabase, req.session)) {
-    res.redirect('/urls');
-  } else {
-    res.redirect('/login');
-  }
+  // if (isLoggedIn(urlDatabase, req.session)) {
+  //   res.redirect('/urls');
+  // } else {
+  //   res.redirect('/login');
+  // }
+  res.render("urls_main");
 });
 
 //for urls_index in ./views
@@ -86,7 +87,11 @@ app.get("/register", (req, res) => {
 
 //view urls_login
 app.get("/login", (req, res) => {
-  res.render("urls_login");
+    if (isLoggedIn(urlDatabase, req.session)) {
+    res.redirect('/urls');
+  } else {
+    res.render('urls_login');
+  }
 });
 
 //newURL
