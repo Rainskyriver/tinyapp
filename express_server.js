@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
+const bcrypt = require('bcrypt');
 const app = express();
 const PORT = 8080;
 const { generateRandomString } = require('./functions/generateRandomString.js');
@@ -130,24 +131,24 @@ app.post("/register", (req, res) => {
   if (req.body.email === '' || req.body.password === '' || checkEmail(users, req.body.email)) {
     res.sendStatus(403);
   }
-
-    id = generateRandomString();
-    users[id] = { 
-      id,
-      email: req.body.email,
-      password: req.body.password
-    };
+  hashword = bcrypt.hashSync(req.body.password, 10);
+  id = generateRandomString();
+  users[id] = { 
+    id,
+    email: req.body.email,
+    password: hashword
+  };
 
   res.cookie("user_id", id);
-
   res.redirect("/urls");
 });
 
 //login
 app.post("/login", (req, res) => {
   if (checkEmail(users, req.body.email)) {
+    
     for (let user in users) {
-      if (req.body.password === users[user].password) {
+      if ((bcrypt.compareSync(req.body.password)) && (req.body.email === users[user].email)) {
         console.log(users[user].id);
         res.cookie("user_id", users[user].id);
         res.redirect("/urls");
