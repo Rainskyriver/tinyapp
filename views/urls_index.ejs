@@ -3,15 +3,20 @@
 <head>
   <meta charset = "utf8">
   <meta name="viewport" content="width=device.width, initial-scale=1, shrink-to-fit=no">
-  <%-include("./partials/_header.ejs")%>
+  <link rel="shortcut icon" href="favicon.png" />
   <link rel="stylesheet" href="http://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
   <link rel="stylesheet" href="#">
   <link rel="icon" href="data:,">
   <title>TinyApp</title>
 </head>
 <body>
+  <%-include("./partials/_header.ejs")%>
   <main style="margin: 1em;">
+    <% if (user) { %>
     <h3>My URLS</h3>
+    <% } else { %>
+    <h3><a href="/login">Log in</a> to see your Short URLs</h3>
+    <% } %>
     <table class="table">
       <thread>
         <tr>

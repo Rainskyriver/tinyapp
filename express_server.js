@@ -1,6 +1,5 @@
 const express = require('express');
 const bodyParser = require("body-parser");
-// const cookieParser = require('cookie-parser');
 const cookieSession = require('cookie-session');
 const bcrypt = require('bcrypt');
 const app = express();
@@ -31,6 +30,7 @@ const userDatabase = {
 
 app.set("view engine", "ejs");
 
+app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
   name: 'session',
@@ -41,7 +41,11 @@ app.use(cookieSession({
 
 //Standard
 app.get("/", (req, res) => {
-  res.send('Hello');
+  if (isLoggedIn(urlDatabase, req.session)) {
+    res.redirect('/urls');
+  } else {
+    res.redirect('/login');
+  }
 });
 
 //for urls_index in ./views
@@ -106,6 +110,7 @@ app.post("/urls/:id", (req, res) => {
     res.redirect('/urls');
   } else {
     res.sendStatus(401);
+    return;
   }
 });
 
@@ -124,6 +129,7 @@ app.post("/urls", (req, res) => {
 app.post("/register", (req, res) => {
   if (req.body.email === '' || req.body.password === '' || checkEmail(userDatabase, req.body.email)) {
     res.sendStatus(403);
+    return;
   }
   const hashword = bcrypt.hashSync(req.body.password, 10);
   const id = generateRandomString();
@@ -145,10 +151,12 @@ app.post("/login", (req, res) => {
       if ((bcrypt.compareSync(req.body.password, userDatabase[user].password)) && (req.body.email === userDatabase[user].email)) {
         req.session.user_id = userDatabase[user].id;
         res.redirect("/urls");
+        return;
       }
     }
   }
   res.redirect("/login");
+  return;
 });
 
 //logout Button
@@ -162,11 +170,12 @@ app.post("/logout", (req, res) => {
 
 //delete URL
 app.post("/urls/:shortURL/delete", (req, res) => {
-  if (isLoggedIn(urlDatabase, req.session.user_id)) {
+  if (isLoggedIn(urlDatabase, req.session)) {
     delete urlDatabase[req.params.shortURL];
     res.redirect("/urls");
   } else {
     res.sendStatus(401);
+    return;
   }
 });
 
