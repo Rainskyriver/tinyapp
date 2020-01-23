@@ -105,9 +105,13 @@ app.get("*", (req, res) => {
 
 //Edit URL button
 app.post("/urls/:id", (req, res) => {
-  const longURL = req.body.longURL;
-  urlDatabase[req.params.id].longURL = longURL;
-  res.redirect('/urls');
+  if (isLoggedIn(urlDatabase, req.cookies)) {
+    const longURL = req.body.longURL;
+    urlDatabase[req.params.id].longURL = longURL;
+    res.redirect('/urls');
+  } else {
+    res.sendStatus(401);
+  }
 });
 
 //Post new URL
@@ -163,8 +167,12 @@ app.post("/logout", (req, res) => {
 //==========DELETE==============================================
 //delete URL
 app.post("/urls/:shortURL/delete", (req, res) => {
-  delete urlDatabase[req.params.shortURL];
-  res.redirect("/urls");
+  if (isLoggedIn(urlDatabase, req.cookies)) {
+    delete urlDatabase[req.params.shortURL];
+    res.redirect("/urls");
+  } else {
+    res.sendStatus(401);
+  }
 });
 
 //============LISTEN============================================
