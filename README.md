@@ -19,5 +19,5 @@
 
 ### How to install and run
 
-- Install all dependencies using `npm install {dependency}`
+- Install all dependencies using `npm install`
 - Run `npm start` or `node express_server.js`

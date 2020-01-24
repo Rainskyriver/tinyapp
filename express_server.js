@@ -43,11 +43,6 @@ app.use(cookieSession({
 
 //Standard
 app.get("/", (req, res) => {
-  // if (isLoggedIn(urlDatabase, req.session)) {
-  //   res.redirect('/urls');
-  // } else {
-  //   res.redirect('/login');
-  // }
   res.render("urls_main");
 });
 
