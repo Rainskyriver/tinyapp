@@ -5,7 +5,7 @@
 ## Final Product
 
 !["Screenshot of splash page"](https://github.com/Rainskyriver/tinyapp/blob/master/public/splash-page.png?raw=true)
-!["Screenshot of URLs page"](https://github.com/Rainskyriver/tinyapp/blob/master/public/urls-index.png?raw=true)
+!["Screenshot of URLs page"](https://github.com/Rainskyriver/tinyapp/blob/92bc9473c70cc5bd86bd1a1058b6ff035ed7bc2e/public/urls-index.png?raw=true)
 
 ### Dependencies
 
