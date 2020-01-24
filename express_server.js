@@ -68,6 +68,7 @@ app.get("/urls/new", (req, res) => {
   };
   if (userDatabase[req.session.user_id]) {
     res.render("urls_new", templateVars);
+    return;
   }
   res.redirect("/login");
 });
