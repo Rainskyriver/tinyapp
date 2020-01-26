@@ -30,8 +30,7 @@ const userDatabase = {
 //=======MIDDLEWARE==========================================================
 
 app.set("view engine", "ejs");
-
-app.use(methodOverride('_method'))
+app.use(methodOverride('_method'));
 app.use(express.static("public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieSession({
@@ -74,12 +73,17 @@ app.get("/urls/:shortURL", (req, res) => {
     res.sendStatus(404);
     return;
   }
-  let templateVars = {
-    shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL].longURL,
-    user: userDatabase[req.session.user_id]
-  };
-  res.render("urls_show", templateVars);
+  if (isLoggedIn(urlDatabase, req.session)) {
+    let templateVars = {
+      shortURL: req.params.shortURL,
+      longURL: urlDatabase[req.params.shortURL].longURL,
+      user: userDatabase[req.session.user_id]
+    };
+    res.render("urls_show", templateVars);
+  } else {
+    res.sendStatus(401);
+    return;
+  }
 });
 
 //view urls_register
@@ -89,7 +93,7 @@ app.get("/register", (req, res) => {
 
 //view urls_login
 app.get("/login", (req, res) => {
-    if (isLoggedIn(urlDatabase, req.session)) {
+  if (isLoggedIn(urlDatabase, req.session)) {
     res.redirect('/urls');
   } else {
     res.render('urls_login');
